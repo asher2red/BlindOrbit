@@ -20,7 +20,7 @@ namespace BlindOrbit.UI
         static readonly Entry[] deviceEntries =
         {
             new Entry(ObstacleKind.BlackHole, "BLACK HOLE", "Purple gravity field pulls the ship inward."),
-            new Entry(ObstacleKind.WarpHole, "WARP HOLE", "Blue-violet gate teleports you to another point."),
+            new Entry(ObstacleKind.WarpHole, "WARP PAIR", "Enter either gate to exit its partner. Both gates then cool down."),
             new Entry(ObstacleKind.OrbitingObstacle, "ORBITER", "Orange asteroid moves around a fixed center."),
             new Entry(ObstacleKind.RotatingObstacle, "ROTATING BAR", "Red warning bar continuously spins."),
             new Entry(ObstacleKind.Booster, "BOOSTER", "Green arrow launches the ship in its pointing direction."),

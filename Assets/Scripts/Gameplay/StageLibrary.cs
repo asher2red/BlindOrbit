@@ -107,7 +107,7 @@ namespace BlindOrbit.Gameplay
                     {
                         new StageObstacle(ObstacleKind.HollowRing, new Vector2(0f, -31f), new Vector2(18f, 18f)),
                         new StageObstacle(ObstacleKind.LongWall, new Vector2(-20f, -9f), new Vector2(14f, 1.15f), 34f),
-                        new StageObstacle(ObstacleKind.WarpHole, new Vector2(-18f, 3f), new Vector2(4f, 4f)).WithDevice(0f, new Vector2(16f, 10f), 55f),
+                        new StageObstacle(ObstacleKind.WarpHole, new Vector2(-18f, 3f), new Vector2(4f, 4f)).WithDevice(0f, new Vector2(16f, 10f), 55f).WithCooldown(1.5f),
                         new StageObstacle(ObstacleKind.LongWall, new Vector2(20f, -5f), new Vector2(15f, 1.15f), -30f),
                         new StageObstacle(ObstacleKind.EllipseAsteroid, new Vector2(-7f, 16f), new Vector2(5f, 24f), 10f),
                         new StageObstacle(ObstacleKind.CircleAsteroid, new Vector2(15f, 31f), new Vector2(10f, 10f)),

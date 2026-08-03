@@ -338,15 +338,27 @@ namespace BlindOrbit.Managers
 
         void CreateWarpHole(StageObstacle obstacle)
         {
-            var warp = CreateSpriteObject("Warp Hole", stageRoot.transform, obstacle.position, obstacle.size, obstacle.rotation, new Color(0.12f, 0.78f, 1f, 0.55f), 4, PlaceholderSpriteFactory.Circle());
-            var center = CreateSpriteObject("Warp Core", warp.transform, Vector2.zero, Vector2.one * 0.52f, 0f, new Color(0.72f, 0.25f, 1f, 0.82f), 5, PlaceholderSpriteFactory.Circle());
+            var pairState = new WarpPairState();
+            var first = CreateWarpEndpoint("Warp Hole A", obstacle.position, obstacle.size, obstacle.rotation, obstacle.speed, false);
+            var second = CreateWarpEndpoint("Warp Hole B", obstacle.targetPosition, obstacle.size, obstacle.rotation, obstacle.speed, true);
+            first.Configure(second.transform, pairState, obstacle.cooldown);
+            second.Configure(first.transform, pairState, obstacle.cooldown);
+        }
+
+        WarpHoleDevice CreateWarpEndpoint(string name, Vector2 position, Vector2 size, float rotation, float spinSpeed, bool alternateColors)
+        {
+            var outerColor = alternateColors ? new Color(0.62f, 0.18f, 1f, 0.55f) : new Color(0.12f, 0.78f, 1f, 0.55f);
+            var coreColor = alternateColors ? new Color(0.12f, 0.78f, 1f, 0.82f) : new Color(0.72f, 0.25f, 1f, 0.82f);
+            var warp = CreateSpriteObject(name, stageRoot.transform, position, size, rotation, outerColor, 4, PlaceholderSpriteFactory.Circle());
+            var center = CreateSpriteObject("Warp Core", warp.transform, Vector2.zero, Vector2.one * 0.52f, 0f, coreColor, 5, PlaceholderSpriteFactory.Circle());
             center.transform.localScale = Vector3.one * 0.52f;
             CreateDecorativeRing("Warp Ring", warp.transform, 0.4f, 0.045f, new Color(0.75f, 0.88f, 1f, 1f), 7, 12);
             var trigger = warp.AddComponent<CircleCollider2D>();
             trigger.isTrigger = true;
             trigger.radius = 0.5f;
-            warp.AddComponent<WarpHoleDevice>().Configure(obstacle.targetPosition);
-            warp.AddComponent<SpinMotion>().Configure(obstacle.speed);
+            var device = warp.AddComponent<WarpHoleDevice>();
+            warp.AddComponent<SpinMotion>().Configure(alternateColors ? -spinSpeed : spinSpeed);
+            return device;
         }
 
         void CreateOrbitingObstacle(StageObstacle obstacle)

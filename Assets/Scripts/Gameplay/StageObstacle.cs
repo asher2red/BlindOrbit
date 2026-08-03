@@ -18,6 +18,8 @@ namespace BlindOrbit.Gameplay
         public Vector2 targetPosition;
         [Tooltip("Degrees per second for rotating and orbiting obstacles.")]
         public float speed = 45f;
+        [Tooltip("Seconds that both warp holes remain inactive after either one is used.")]
+        public float cooldown = 1.5f;
 
         public StageObstacle(ObstacleKind kind, Vector2 position, Vector2 size, float rotation = 0f)
         {
@@ -33,6 +35,12 @@ namespace BlindOrbit.Gameplay
             strength = effectStrength;
             targetPosition = target;
             speed = motionSpeed;
+            return this;
+        }
+
+        public StageObstacle WithCooldown(float seconds)
+        {
+            cooldown = Mathf.Max(0.1f, seconds);
             return this;
         }
     }
