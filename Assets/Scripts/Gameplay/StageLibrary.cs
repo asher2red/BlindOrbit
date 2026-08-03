@@ -21,6 +21,7 @@ namespace BlindOrbit.Gameplay
                     {
                         new StageObstacle(ObstacleKind.CircleAsteroid, new Vector2(-6.5f, -23f), new Vector2(7.5f, 7.5f)),
                         new StageObstacle(ObstacleKind.CircleAsteroid, new Vector2(7.2f, -9f), new Vector2(8.6f, 8.6f)),
+                        new StageObstacle(ObstacleKind.Booster, new Vector2(-8f, -3f), new Vector2(3.2f, 5f), -8f).WithDevice(3.5f, Vector2.zero),
                         new StageObstacle(ObstacleKind.LongWall, new Vector2(-4.8f, 8f), new Vector2(20f, 1.2f), -8f),
                         new StageObstacle(ObstacleKind.EllipseAsteroid, new Vector2(8.5f, 23f), new Vector2(5.2f, 13f), 14f),
                     }),
@@ -37,6 +38,7 @@ namespace BlindOrbit.Gameplay
                         new StageObstacle(ObstacleKind.EllipseAsteroid, new Vector2(-9f, -28f), new Vector2(5.5f, 18f), 16f),
                         new StageObstacle(ObstacleKind.EllipseAsteroid, new Vector2(9.5f, -16f), new Vector2(5.0f, 21f), -18f),
                         new StageObstacle(ObstacleKind.LongWall, new Vector2(-3f, 3f), new Vector2(27f, 1.25f), 7f),
+                        new StageObstacle(ObstacleKind.RotatingObstacle, new Vector2(8f, 10f), new Vector2(9f, 0.8f)).WithDevice(0f, Vector2.zero, 32f),
                         new StageObstacle(ObstacleKind.CircleAsteroid, new Vector2(11f, 18f), new Vector2(8.5f, 8.5f)),
                         new StageObstacle(ObstacleKind.LongWall, new Vector2(-9f, 29f), new Vector2(18f, 1.15f), -16f),
                     }),
@@ -51,6 +53,7 @@ namespace BlindOrbit.Gameplay
                     new List<StageObstacle>
                     {
                         new StageObstacle(ObstacleKind.HollowRing, new Vector2(0f, -27f), new Vector2(15f, 15f)),
+                        new StageObstacle(ObstacleKind.BlackHole, new Vector2(-12f, -12f), new Vector2(10f, 10f)).WithDevice(7f, Vector2.zero, 24f),
                         new StageObstacle(ObstacleKind.EllipseAsteroid, new Vector2(12f, -6f), new Vector2(5f, 22f), -10f),
                         new StageObstacle(ObstacleKind.MazeStructure, new Vector2(1f, 16f), new Vector2(25f, 17f)),
                         new StageObstacle(ObstacleKind.LongWall, new Vector2(-11f, 34f), new Vector2(20f, 1.15f), 13f),
@@ -69,6 +72,7 @@ namespace BlindOrbit.Gameplay
                         new StageObstacle(ObstacleKind.LongWall, new Vector2(-18f, -34f), new Vector2(12f, 1.2f), 28f),
                         new StageObstacle(ObstacleKind.LongWall, new Vector2(18f, -31f), new Vector2(13f, 1.2f), -26f),
                         new StageObstacle(ObstacleKind.CircleAsteroid, new Vector2(-4f, -19f), new Vector2(10f, 10f)),
+                        new StageObstacle(ObstacleKind.FuelDrain, new Vector2(-13f, -5f), new Vector2(8f, 8f)).WithDevice(4f, Vector2.zero, -30f),
                         new StageObstacle(ObstacleKind.EllipseAsteroid, new Vector2(10f, -2f), new Vector2(5.2f, 24f), 8f),
                         new StageObstacle(ObstacleKind.LongWall, new Vector2(-9f, 19f), new Vector2(24f, 1.2f), -12f),
                         new StageObstacle(ObstacleKind.CircleAsteroid, new Vector2(16f, 35f), new Vector2(9f, 9f)),
@@ -86,6 +90,7 @@ namespace BlindOrbit.Gameplay
                         new StageObstacle(ObstacleKind.EllipseAsteroid, new Vector2(-13f, -38f), new Vector2(4.8f, 20f), -18f),
                         new StageObstacle(ObstacleKind.EllipseAsteroid, new Vector2(13f, -26f), new Vector2(4.8f, 22f), 18f),
                         new StageObstacle(ObstacleKind.LongWall, new Vector2(0f, -7f), new Vector2(30f, 1.1f), 0f),
+                        new StageObstacle(ObstacleKind.OrbitingObstacle, new Vector2(10f, 7f), new Vector2(4f, 4f)).WithDevice(0f, new Vector2(0f, 7f), 28f),
                         new StageObstacle(ObstacleKind.CircleAsteroid, new Vector2(-15f, 9f), new Vector2(8.5f, 8.5f)),
                         new StageObstacle(ObstacleKind.EllipseAsteroid, new Vector2(11f, 24f), new Vector2(5.2f, 22f), -14f),
                         new StageObstacle(ObstacleKind.LongWall, new Vector2(-12f, 42f), new Vector2(20f, 1.1f), 17f),
@@ -102,6 +107,7 @@ namespace BlindOrbit.Gameplay
                     {
                         new StageObstacle(ObstacleKind.HollowRing, new Vector2(0f, -31f), new Vector2(18f, 18f)),
                         new StageObstacle(ObstacleKind.LongWall, new Vector2(-20f, -9f), new Vector2(14f, 1.15f), 34f),
+                        new StageObstacle(ObstacleKind.WarpHole, new Vector2(-18f, 3f), new Vector2(4f, 4f)).WithDevice(0f, new Vector2(16f, 10f), 55f),
                         new StageObstacle(ObstacleKind.LongWall, new Vector2(20f, -5f), new Vector2(15f, 1.15f), -30f),
                         new StageObstacle(ObstacleKind.EllipseAsteroid, new Vector2(-7f, 16f), new Vector2(5f, 24f), 10f),
                         new StageObstacle(ObstacleKind.CircleAsteroid, new Vector2(15f, 31f), new Vector2(10f, 10f)),

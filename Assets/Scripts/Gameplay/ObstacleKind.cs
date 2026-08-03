@@ -6,6 +6,12 @@ namespace BlindOrbit.Gameplay
         EllipseAsteroid,
         LongWall,
         HollowRing,
-        MazeStructure
+        MazeStructure,
+        BlackHole,
+        WarpHole,
+        OrbitingObstacle,
+        RotatingObstacle,
+        Booster,
+        FuelDrain
     }
 }

@@ -27,5 +27,18 @@ namespace BlindOrbit.Gameplay
             CurrentFuel -= consumed;
             return consumed;
         }
+
+
+        public float AddFuel(float requestedAmount)
+        {
+            if (requestedAmount <= 0f)
+            {
+                return 0f;
+            }
+
+            var added = Mathf.Min(MaxFuel - CurrentFuel, requestedAmount);
+            CurrentFuel += added;
+            return added;
+        }
     }
 }

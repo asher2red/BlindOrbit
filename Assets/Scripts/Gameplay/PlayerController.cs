@@ -360,6 +360,28 @@ namespace BlindOrbit.Gameplay
             if (other.TryGetComponent<GoalArea>(out _))
             {
                 stageManager?.ClearStage();
+                return;
+            }
+
+            if (other.TryGetComponent<PlayerTriggerEffect>(out var effect))
+            {
+                effect.OnPlayerEnter(this);
+            }
+        }
+
+        void OnTriggerStay2D(Collider2D other)
+        {
+            if (other.TryGetComponent<PlayerTriggerEffect>(out var effect))
+            {
+                effect.OnPlayerStay(this);
+            }
+        }
+
+        void OnTriggerExit2D(Collider2D other)
+        {
+            if (other.TryGetComponent<PlayerTriggerEffect>(out var effect))
+            {
+                effect.OnPlayerExit(this);
             }
         }
 

@@ -16,6 +16,7 @@ namespace BlindOrbit.Managers
         RankingManager rankingManager;
         GameObject screenRoot;
         bool titleInputArmed;
+        bool howToPlayOpen;
         bool runEnding;
 
         public void Initialize(GameManager owner, RankingManager rankings)
@@ -35,6 +36,11 @@ namespace BlindOrbit.Managers
         {
             if (!titleInputArmed)
             {
+                if (howToPlayOpen && Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+                {
+                    CloseHowToPlay();
+                }
+
                 return;
             }
 
@@ -70,6 +76,7 @@ namespace BlindOrbit.Managers
             Time.timeScale = 1f;
             runEnding = false;
             titleInputArmed = false;
+            howToPlayOpen = false;
             gameManager.CleanupGameplaySystems();
             DestroyScreen();
             SceneManager.LoadScene(TitleSceneName);
@@ -85,6 +92,7 @@ namespace BlindOrbit.Managers
         {
             DestroyScreen();
             titleInputArmed = false;
+            howToPlayOpen = false;
 
             if (scene.name == GameSceneName)
             {
@@ -153,8 +161,46 @@ namespace BlindOrbit.Managers
             var subtitle = ArcadeUIFactory.CreateText("Subtitle", background, "INERTIA PUZZLE RUN", 28, TextAnchor.MiddleCenter);
             ArcadeUIFactory.Anchor(subtitle.rectTransform, new Vector2(0.08f, 0.49f), new Vector2(0.92f, 0.55f), Vector2.zero, Vector2.zero);
 
-            var prompt = ArcadeUIFactory.CreateText("Prompt", background, "Touch Anywhere to Start", 34, TextAnchor.MiddleCenter);
-            ArcadeUIFactory.Anchor(prompt.rectTransform, new Vector2(0.08f, 0.26f), new Vector2(0.92f, 0.34f), Vector2.zero, Vector2.zero);
+            var start = ArcadeUIFactory.CreateButton("Start Button", background, "START", StartFromTitle);
+            ArcadeUIFactory.Anchor(start.GetComponent<RectTransform>(), new Vector2(0.2f, 0.29f), new Vector2(0.8f, 0.36f), Vector2.zero, Vector2.zero);
+
+            var howToPlay = ArcadeUIFactory.CreateButton("How To Play Button", background, "HOW TO PLAY", OpenHowToPlay);
+            ArcadeUIFactory.Anchor(howToPlay.GetComponent<RectTransform>(), new Vector2(0.2f, 0.20f), new Vector2(0.8f, 0.27f), Vector2.zero, Vector2.zero);
+
+            var prompt = ArcadeUIFactory.CreateText("Prompt", background, "Press Enter / Space", 24, TextAnchor.MiddleCenter);
+            prompt.color = new Color(0.52f, 0.7f, 0.78f, 1f);
+            ArcadeUIFactory.Anchor(prompt.rectTransform, new Vector2(0.08f, 0.14f), new Vector2(0.92f, 0.19f), Vector2.zero, Vector2.zero);
+        }
+
+        void StartFromTitle()
+        {
+            if (!titleInputArmed || howToPlayOpen)
+            {
+                return;
+            }
+
+            titleInputArmed = false;
+            LoadGameScene();
+        }
+
+        void OpenHowToPlay()
+        {
+            if (howToPlayOpen || screenRoot == null)
+            {
+                return;
+            }
+
+            howToPlayOpen = true;
+            titleInputArmed = false;
+            var helpObject = new GameObject("How To Play", typeof(HowToPlayUI));
+            helpObject.transform.SetParent(screenRoot.transform, false);
+            helpObject.GetComponent<HowToPlayUI>().Show(CloseHowToPlay);
+        }
+
+        void CloseHowToPlay()
+        {
+            howToPlayOpen = false;
+            titleInputArmed = true;
         }
 
         void ShowRankingScreen(int rank, int score)
@@ -183,14 +229,7 @@ namespace BlindOrbit.Managers
                 return true;
             }
 
-            var mouse = Mouse.current;
-            if (mouse != null && mouse.leftButton.wasPressedThisFrame)
-            {
-                return true;
-            }
-
-            var touch = Touchscreen.current;
-            return touch != null && touch.primaryTouch.press.wasPressedThisFrame;
+            return false;
         }
     }
 }

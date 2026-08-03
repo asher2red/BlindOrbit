@@ -302,7 +302,135 @@ namespace BlindOrbit.Managers
                 case ObstacleKind.MazeStructure:
                     CreateMaze(obstacle);
                     break;
+                case ObstacleKind.BlackHole:
+                    CreateBlackHole(obstacle);
+                    break;
+                case ObstacleKind.WarpHole:
+                    CreateWarpHole(obstacle);
+                    break;
+                case ObstacleKind.OrbitingObstacle:
+                    CreateOrbitingObstacle(obstacle);
+                    break;
+                case ObstacleKind.RotatingObstacle:
+                    CreateRotatingObstacle(obstacle);
+                    break;
+                case ObstacleKind.Booster:
+                    CreateBooster(obstacle);
+                    break;
+                case ObstacleKind.FuelDrain:
+                    CreateFuelDrain(obstacle);
+                    break;
             }
+        }
+
+        void CreateBlackHole(StageObstacle obstacle)
+        {
+            var hole = CreateSpriteObject("Black Hole", stageRoot.transform, obstacle.position, obstacle.size, obstacle.rotation, new Color(0.28f, 0.08f, 0.48f, 0.72f), 4, PlaceholderSpriteFactory.Circle());
+            var core = CreateSpriteObject("Event Horizon", hole.transform, Vector2.zero, Vector2.one * 0.32f, 0f, new Color(0.01f, 0.01f, 0.025f, 1f), 6, PlaceholderSpriteFactory.Circle());
+            core.transform.localScale = Vector3.one * 0.32f;
+            CreateDecorativeRing("Gravity Ring", hole.transform, 0.39f, 0.035f, new Color(0.82f, 0.22f, 1f, 0.9f), 7, 16);
+            var trigger = hole.AddComponent<CircleCollider2D>();
+            trigger.isTrigger = true;
+            trigger.radius = 0.5f;
+            hole.AddComponent<BlackHoleDevice>().Configure(obstacle.strength);
+            hole.AddComponent<SpinMotion>().Configure(obstacle.speed);
+        }
+
+        void CreateWarpHole(StageObstacle obstacle)
+        {
+            var warp = CreateSpriteObject("Warp Hole", stageRoot.transform, obstacle.position, obstacle.size, obstacle.rotation, new Color(0.12f, 0.78f, 1f, 0.55f), 4, PlaceholderSpriteFactory.Circle());
+            var center = CreateSpriteObject("Warp Core", warp.transform, Vector2.zero, Vector2.one * 0.52f, 0f, new Color(0.72f, 0.25f, 1f, 0.82f), 5, PlaceholderSpriteFactory.Circle());
+            center.transform.localScale = Vector3.one * 0.52f;
+            CreateDecorativeRing("Warp Ring", warp.transform, 0.4f, 0.045f, new Color(0.75f, 0.88f, 1f, 1f), 7, 12);
+            var trigger = warp.AddComponent<CircleCollider2D>();
+            trigger.isTrigger = true;
+            trigger.radius = 0.5f;
+            warp.AddComponent<WarpHoleDevice>().Configure(obstacle.targetPosition);
+            warp.AddComponent<SpinMotion>().Configure(obstacle.speed);
+        }
+
+        void CreateOrbitingObstacle(StageObstacle obstacle)
+        {
+            var asteroid = CreateSpriteObject("Orbiting Asteroid", stageRoot.transform, obstacle.position, obstacle.size, obstacle.rotation, new Color(0.72f, 0.48f, 0.2f, 1f), 5, PlaceholderSpriteFactory.Circle());
+            asteroid.AddComponent<ObstacleMarker>();
+            asteroid.AddComponent<CircleCollider2D>().radius = 0.5f;
+            ConfigureMovingObstacleBody(asteroid);
+            asteroid.AddComponent<OrbitMotion>().Configure(obstacle.targetPosition, obstacle.speed);
+            CreateWorldOrbitGuide(obstacle.targetPosition, Vector2.Distance(obstacle.position, obstacle.targetPosition));
+        }
+
+        void CreateRotatingObstacle(StageObstacle obstacle)
+        {
+            var bar = CreateSpriteObject("Rotating Bar", stageRoot.transform, obstacle.position, obstacle.size, obstacle.rotation, new Color(0.72f, 0.25f, 0.28f, 1f), 5, PlaceholderSpriteFactory.Square());
+            bar.AddComponent<ObstacleMarker>();
+            bar.AddComponent<BoxCollider2D>();
+            CreateSpriteObject("Warning Tip A", bar.transform, new Vector2(-0.46f, 0f), new Vector2(0.08f, 1f), 0f, new Color(1f, 0.85f, 0.12f, 1f), 6, PlaceholderSpriteFactory.Square());
+            CreateSpriteObject("Warning Tip B", bar.transform, new Vector2(0.46f, 0f), new Vector2(0.08f, 1f), 0f, new Color(1f, 0.85f, 0.12f, 1f), 6, PlaceholderSpriteFactory.Square());
+            ConfigureMovingObstacleBody(bar);
+            bar.AddComponent<SpinMotion>().Configure(obstacle.speed);
+        }
+
+        static void ConfigureMovingObstacleBody(GameObject obstacle)
+        {
+            var body = obstacle.AddComponent<Rigidbody2D>();
+            body.bodyType = RigidbodyType2D.Kinematic;
+            body.gravityScale = 0f;
+            body.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+        }
+
+        void CreateWorldOrbitGuide(Vector2 center, float radius)
+        {
+            if (radius <= 0.1f)
+            {
+                return;
+            }
+
+            var guide = new GameObject("Orbit Guide");
+            guide.transform.SetParent(stageRoot.transform, false);
+            guide.transform.position = center;
+            const int segments = 24;
+            for (var i = 0; i < segments; i += 2)
+            {
+                var angle = i / (float)segments * Mathf.PI * 2f;
+                var position = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
+                CreateSpriteObject("Orbit Dash", guide.transform, position, new Vector2(radius * 0.18f, 0.08f), angle * Mathf.Rad2Deg + 90f, new Color(1f, 0.55f, 0.14f, 0.42f), 3, PlaceholderSpriteFactory.Square());
+            }
+        }
+
+        void CreateDecorativeRing(string name, Transform parent, float radius, float thickness, Color color, int sortingOrder, int segments)
+        {
+            var ring = new GameObject(name);
+            ring.transform.SetParent(parent, false);
+            for (var i = 0; i < segments; i++)
+            {
+                var angle = i / (float)segments * Mathf.PI * 2f;
+                var position = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
+                CreateSpriteObject("Arc", ring.transform, position, new Vector2(radius * 0.55f, thickness), angle * Mathf.Rad2Deg + 90f, color, sortingOrder, PlaceholderSpriteFactory.Square());
+            }
+        }
+
+        void CreateBooster(StageObstacle obstacle)
+        {
+            var booster = CreateSpriteObject("Booster", stageRoot.transform, obstacle.position, obstacle.size, obstacle.rotation, new Color(0.1f, 0.92f, 0.78f, 0.62f), 4, PlaceholderSpriteFactory.Square());
+            CreateSpriteObject("Boost Arrow", booster.transform, new Vector2(0f, 0.08f), new Vector2(0.46f, 0.62f), 0f, new Color(0.88f, 1f, 0.92f, 0.9f), 5, PlaceholderSpriteFactory.Triangle());
+            CreateSpriteObject("Boost Stripe A", booster.transform, new Vector2(0f, -0.22f), new Vector2(0.65f, 0.055f), 0f, new Color(0.9f, 1f, 0.95f, 0.9f), 6, PlaceholderSpriteFactory.Square());
+            CreateSpriteObject("Boost Stripe B", booster.transform, new Vector2(0f, -0.36f), new Vector2(0.48f, 0.055f), 0f, new Color(0.9f, 1f, 0.95f, 0.75f), 6, PlaceholderSpriteFactory.Square());
+            var trigger = booster.AddComponent<BoxCollider2D>();
+            trigger.isTrigger = true;
+            booster.AddComponent<BoosterDevice>().Configure(obstacle.strength);
+        }
+
+        void CreateFuelDrain(StageObstacle obstacle)
+        {
+            var drain = CreateSpriteObject("Fuel Drain", stageRoot.transform, obstacle.position, obstacle.size, obstacle.rotation, new Color(0.95f, 0.18f, 0.38f, 0.42f), 4, PlaceholderSpriteFactory.Circle());
+            CreateSpriteObject("Drain Core", drain.transform, Vector2.zero, Vector2.one * 0.38f, 0f, new Color(1f, 0.55f, 0.1f, 0.88f), 5, PlaceholderSpriteFactory.Circle());
+            CreateSpriteObject("Fuel Minus", drain.transform, Vector2.zero, new Vector2(0.38f, 0.08f), 0f, new Color(0.1f, 0.015f, 0.02f, 1f), 7, PlaceholderSpriteFactory.Square());
+            CreateDecorativeRing("Drain Ring", drain.transform, 0.39f, 0.035f, new Color(1f, 0.3f, 0.08f, 0.95f), 6, 10);
+            var trigger = drain.AddComponent<CircleCollider2D>();
+            trigger.isTrigger = true;
+            trigger.radius = 0.5f;
+            drain.AddComponent<FuelDrainDevice>().Configure(obstacle.strength);
+            drain.AddComponent<SpinMotion>().Configure(obstacle.speed);
         }
 
         void CreateCircleObstacle(StageObstacle obstacle)
