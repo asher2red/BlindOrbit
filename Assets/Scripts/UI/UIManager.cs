@@ -499,7 +499,10 @@ namespace BlindOrbit.UI
                 inputModule = eventSystem.gameObject.AddComponent<InputSystemUIInputModule>();
             }
 
-            inputModule.AssignDefaultActions();
+            if (inputModule.actionsAsset == null)
+            {
+                inputModule.AssignDefaultActions();
+            }
         }
 
         static Font GetDefaultFont()

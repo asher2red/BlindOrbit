@@ -97,7 +97,12 @@ namespace BlindOrbit.UI
                 inputModule = eventSystem.gameObject.AddComponent<InputSystemUIInputModule>();
             }
 
-            inputModule.AssignDefaultActions();
+            // Reassigning actions while the module is dispatching a button click
+            // can stall Unity during a synchronous UI-driven scene transition.
+            if (inputModule.actionsAsset == null)
+            {
+                inputModule.AssignDefaultActions();
+            }
         }
 
         public static Font GetDefaultFont()

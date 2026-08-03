@@ -18,6 +18,7 @@ namespace BlindOrbit.Managers
         bool titleInputArmed;
         bool howToPlayOpen;
         bool runEnding;
+        bool sceneTransitionInProgress;
 
         public void Initialize(GameManager owner, RankingManager rankings)
         {
@@ -73,19 +74,56 @@ namespace BlindOrbit.Managers
 
         public void LoadTitleScene()
         {
+            if (sceneTransitionInProgress)
+            {
+                return;
+            }
+
             Time.timeScale = 1f;
             runEnding = false;
             titleInputArmed = false;
             howToPlayOpen = false;
-            gameManager.CleanupGameplaySystems();
-            DestroyScreen();
-            SceneManager.LoadScene(TitleSceneName);
+            StartCoroutine(LoadSceneSafely(TitleSceneName, true));
         }
 
         void LoadGameScene()
         {
+            if (sceneTransitionInProgress)
+            {
+                return;
+            }
+
+            StartCoroutine(LoadSceneSafely(GameSceneName, false));
+        }
+
+        IEnumerator LoadSceneSafely(string sceneName, bool cleanupGameplay)
+        {
+            sceneTransitionInProgress = true;
+
+            // Never unload a scene or rebuild the input module from inside the
+            // UI module's pointer-click callback. Let that event finish first.
+            yield return null;
+
+            if (cleanupGameplay)
+            {
+                gameManager.CleanupGameplaySystems();
+            }
+
             DestroyScreen();
-            SceneManager.LoadScene(GameSceneName);
+
+            // Destroy() is deferred until the end of the frame. Waiting here
+            // prevents persistent canvases from overlapping the next scene.
+            yield return null;
+
+            var loadOperation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
+            if (loadOperation == null)
+            {
+                sceneTransitionInProgress = false;
+                yield break;
+            }
+
+            yield return loadOperation;
+            sceneTransitionInProgress = false;
         }
 
         void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
